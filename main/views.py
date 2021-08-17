@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 
-from main.models import *
+from main.paginations import CustomPagination
 from main.permissions import IsAuthorPermission
 from main.serializers import *
 
@@ -21,6 +22,10 @@ class PermissionMixin:
 class JobViewSet(PermissionMixin, ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    filterset_fields = ['company_name']
+    search_fields = ['position']
+    pagination_class = CustomPagination
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
