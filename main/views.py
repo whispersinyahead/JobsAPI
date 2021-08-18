@@ -1,6 +1,6 @@
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -65,4 +65,22 @@ class CommentViewSet(PermissionMixin, ModelViewSet):
         context = super().get_serializer_context()
         context['action'] = self.action
         return context
+
+
+class AddStarRatingView(ModelViewSet):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.order_by('author')
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            permissions = [IsAuthorPermission]
+        elif self.action in ['create']:
+            permissions = [IsAuthenticated]
+        else:
+            permissions = [IsAdminUser]
+        return [permission() for permission in permissions]
 

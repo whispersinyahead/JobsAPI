@@ -42,6 +42,7 @@ schema_view = get_schema_view(
 router = DefaultRouter()
 router.register('jobs', JobViewSet)
 router.register('comments', CommentViewSet)
+router.register('rating', AddStarRatingView)
 
 
 urlpatterns = [

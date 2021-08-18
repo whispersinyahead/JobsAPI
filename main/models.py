@@ -47,3 +47,29 @@ class Comment(models.Model):
     class Meta:
         ordering = ('-created', )
 
+
+class RatingStar(models.Model):
+    value = models.SmallIntegerField("Значение", default=0)
+
+    def __str__(self):
+        return f'{self.value}'
+
+    class Mata:
+        verbose_name = 'Rating star'
+        verbose_name_plural = 'Rating stars'
+        ordering = ['-value']
+
+
+class Rating(models.Model):
+    star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name='Star', related_name='ratings')
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name='Job', related_name='ratings')
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ratings')
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.star} - {self.job}'
+
+    class Meta:
+        verbose_name = 'Rating'
+        verbose_name_plural = 'Ratings'
+

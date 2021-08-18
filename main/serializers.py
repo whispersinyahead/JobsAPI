@@ -23,9 +23,11 @@ class JobSerializer(serializers.ModelSerializer):
         if action == 'list':
             representation.pop('description')
             representation['likes'] = instance.likes.count()
+            representation['rating'] = instance.ratings.count()
         elif action == 'retrieve':
             representation['comments'] = CommentSerializer(instance.comments.all(), many=True).data
             representation['likes'] = instance.likes.count()
+            representation['rating'] = RatingSerializer(instance.ratings.all(), many=True).data
         return representation
 
     def create(self, validated_data):
@@ -75,4 +77,26 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('email', )
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.email')
+
+    class Meta:
+        model = Rating
+        fields = ('author', 'created', 'star')
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        email = request.user
+        job = validated_data.get('job')
+
+        if Rating.objects.filter(author=email, job=job):
+            rating = Rating.objects.get(author=email, job=job)
+            return rating
+
+        rating = Rating.objects.create(author=request.user, **validated_data)
+        return rating
+
+
 
