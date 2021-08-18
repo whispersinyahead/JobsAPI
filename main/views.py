@@ -1,11 +1,35 @@
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
+from main import services
 from main.paginations import CustomPagination
 from main.permissions import IsAuthorPermission
 from main.serializers import *
+
+
+class LikedMixin:
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        obj = self.get_object()
+        services.add_like(obj, request.user)
+        return Response()
+
+    @action(detail=True, methods=['post'])
+    def unlike(self, request, pk=None):
+        obj = self.get_object()
+        services.remove_like(obj, request.user)
+        return Response()
+
+    @action(detail=True, methods=['get'])
+    def get_users(self, request, pk=None):
+        obj = self.get_object()
+        fans = services.get_users(obj)
+        serializer = UserSerializer(fans, many=True)
+        return Response(serializer.data)
 
 
 class PermissionMixin:
@@ -19,7 +43,7 @@ class PermissionMixin:
         return [permission() for permission in permissions]
 
 
-class JobViewSet(PermissionMixin, ModelViewSet):
+class JobViewSet(LikedMixin, PermissionMixin, ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]

@@ -22,8 +22,10 @@ class JobSerializer(serializers.ModelSerializer):
         action = self.context.get('action')
         if action == 'list':
             representation.pop('description')
+            representation['likes'] = instance.likes.count()
         elif action == 'retrieve':
             representation['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+            representation['likes'] = instance.likes.count()
         return representation
 
     def create(self, validated_data):
@@ -67,3 +69,10 @@ class CommentSerializer(serializers.ModelSerializer):
             author=request.user, **validated_data
         )
         return comment
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('email', )
+
