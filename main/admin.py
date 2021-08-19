@@ -15,3 +15,4 @@ class JobAdmin(admin.ModelAdmin):
 admin.site.register(Comment)
 admin.site.register(Rating)
 admin.site.register(RatingStar)
+admin.site.register(Like)

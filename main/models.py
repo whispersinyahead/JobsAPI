@@ -12,6 +12,9 @@ class Like(models.Model):
     object_id = models.PositiveSmallIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    def __str__(self):
+        return f"{self.user} {self.object_id}"
+
 
 class Job(models.Model):
     company_name = models.CharField(max_length=60)
@@ -54,7 +57,7 @@ class RatingStar(models.Model):
     def __str__(self):
         return f'{self.value}'
 
-    class Mata:
+    class Meta:
         verbose_name = 'Rating star'
         verbose_name_plural = 'Rating stars'
         ordering = ['-value']

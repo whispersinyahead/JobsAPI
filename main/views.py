@@ -27,9 +27,10 @@ class LikedMixin:
     @action(detail=True, methods=['get'])
     def get_users(self, request, pk=None):
         obj = self.get_object()
-        fans = services.get_users(obj)
-        serializer = UserSerializer(fans, many=True)
+        users = services.get_users(obj)
+        serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
+
 
 
 class PermissionMixin:
@@ -55,6 +56,13 @@ class JobViewSet(LikedMixin, PermissionMixin, ModelViewSet):
         context = super().get_serializer_context()
         context['action'] = self.action
         return context
+
+    @action(detail=False, methods=['get'])
+    def liked(self, request, pk=None):
+        likeList = Like.objects.filter(user=request.user)
+        list_ = [Job.objects.get(id=like.object_id) for like in likeList]
+        serializer = JobSerializer(list_, many=True)
+        return Response(serializer.data)
 
 
 class CommentViewSet(PermissionMixin, ModelViewSet):
@@ -83,4 +91,3 @@ class AddStarRatingView(ModelViewSet):
         else:
             permissions = [IsAdminUser]
         return [permission() for permission in permissions]
-
