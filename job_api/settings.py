@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'django_filters',
+    'oauth2_provider',
+    'social_django',
+    'rest_framework_social_oauth2',
 
     # apps
     'account',

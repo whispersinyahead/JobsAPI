@@ -65,7 +65,7 @@ class RatingStar(models.Model):
 
 class Rating(models.Model):
     star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name='Star', related_name='ratings')
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name='Job', related_name='ratings')
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, verbose_name='Job', related_name='ratings', default='')
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ratings')
     created = models.DateTimeField(auto_now_add=True)
 

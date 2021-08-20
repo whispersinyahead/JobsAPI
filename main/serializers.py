@@ -84,7 +84,7 @@ class RatingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rating
-        fields = ('author', 'created', 'star')
+        fields = ('author', 'created', 'star', 'job')
 
     def create(self, validated_data):
         request = self.context.get('request')
